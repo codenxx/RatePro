@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DURP – The World's Most Accurate Rating</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0a1628;--navy2:#0f1f35;--navy3:#162743;--navy4:#1d3452;
+  --accent:#00d4aa;--accent2:#0099ff;--accent-dark:#00b894;
+  --gold:#f5a623;--silver:#94a3b8;
+  --text:#ffffff;--text2:#a8bbd0;--text3:#5c7a96;
+  --card:#0f1f35;--card2:#162743;--card3:#1d3452;
+  --border:#1e3a5c;--border2:#2a4a6b;
+  --green:#22c55e;--red:#ef4444;--amber:#f59e0b;
+  --r8:8px;--r12:12px;--r16:16px;--r24:24px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--navy2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ===== VIEWS ===== */
+.view{display:none}
+.view.active{display:block}
+
+/* ===== NAV ===== */
+#main-nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:64px;display:flex;align-items:center;padding:0 40px;gap:32px;
+  transition:background .3s,box-shadow .3s;
+}
+#main-nav.scrolled{background:rgba(10,22,40,.97);box-shadow:0 1px 0 var(--border)}
+.nav-logo{font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-1px;cursor:pointer;flex-shrink:0}
+.nav-logo span{color:#fff}
+.nav-links{display:flex;gap:4px;flex:1}
+.nav-link{padding:6px 14px;border-radius:var(--r8);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border:none;background:none;transition:all .15s}
+.nav-link:hover,.nav-link.active{color:#fff;background:rgba(255,255,255,.08)}
+.nav-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.btn{padding:9px 20px;border-radius:var(--r8);font-size:13px;font-weight:600;border:none;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+.btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.3)}
+.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,.06)}
+.btn-accent{background:var(--accent);color:#0a1628}
+.btn-accent:hover{background:var(--accent-dark);transform:translateY(-1px)}
+.btn-sm{padding:7px 16px;font-size:12px}
+.btn-lg{padding:14px 32px;font-size:15px;border-radius:var(--r12)}
+.btn-danger{background:#ef4444;color:#fff}
+.btn-danger:hover{background:#dc2626}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* ===== LANDING ===== */
+/* Hero */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;text-align:center;padding:120px 24px 80px;
+}
+#hero-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,#0a1628 0%,#0d2040 40%,#081830 100%);
+  z-index:0;
+}
+.hero-orb{
+  position:absolute;border-radius:50%;filter:blur(80px);opacity:.18;pointer-events:none;
+}
+.orb1{width:600px;height:600px;background:#00d4aa;top:-200px;right:-150px}
+.orb2{width:400px;height:400px;background:#0099ff;bottom:-100px;left:-100px}
+.hero-content{position:relative;z-index:2;max-width:860px}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.3);
+  color:var(--accent);font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+  padding:6px 16px;border-radius:20px;margin-bottom:28px;
+}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#hero h1{
+  font-size:clamp(38px,6vw,72px);font-weight:900;line-height:1.05;
+  letter-spacing:-2px;margin-bottom:20px;color:#fff;
+}
+#hero h1 .accent{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+#hero p{font-size:clamp(15px,2vw,19px);color:var(--text2);max-width:560px;margin:0 auto 36px;line-height:1.65}
+.hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:56px}
+.hero-stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap}
+.hero-stat .num{font-size:clamp(26px,4vw,40px);font-weight:800;color:#fff;letter-spacing:-1px}
+.hero-stat .lbl{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
+/* hero image strip */
+#hero-strip{
+  width:100%;overflow:hidden;position:relative;
+  background:linear-gradient(180deg,transparent,var(--navy2) 85%);
+  margin-top:-40px;
+}
+.hero-strip-inner{
+  display:flex;gap:8px;padding:0 8px 0;
+  position:relative;z-index:1;
+}
+.hero-strip-inner img{
+  height:260px;width:auto;object-fit:cover;border-radius:var(--r12);flex-shrink:0;opacity:.8;
+}
+
+/* Platform Stats */
+#platform-stats{padding:80px 40px;background:var(--navy2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stats-container{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}
+.stat-block{text-align:center;padding:0 40px;border-right:1px solid var(--border)}
+.stat-block:last-child{border-right:none}
+.stat-block .big{font-size:clamp(36px,5vw,60px);font-weight:900;color:#fff;letter-spacing:-2px;margin-bottom:6px}
+.stat-block .big span{color:var(--accent)}
+.stat-block .desc{font-size:14px;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+
+/* Features / How it works */
+#features{padding:100px 40px;max-width:1100px;margin:0 auto}
+.section-eyebrow{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.section-title{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-1px;margin-bottom:16px;color:#fff}
+.section-sub{font-size:16px;color:var(--text2);line-height:1.7;max-width:520px;margin-bottom:56px}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feature-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--r16);
+  padding:28px;transition:border-color .2s,transform .2s;
+}
+.feature-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.feature-icon{
+  width:48px;height:48px;border-radius:var(--r12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:18px;
+}
+.feature-card h3{font-size:16px;font-weight:700;margin-bottom:8px;color:#fff}
+.feature-card p{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* Join Section */
+#join-section{
+  padding:100px 40px;
+  background:linear-gradient(135deg,var(--navy2),var(--navy3));
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  text-align:center;
+}
+.join-inner{max-width:700px;margin:0 auto}
+#join-section h2{font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-1.5px;margin-bottom:14px}
+#join-section p{font-size:16px;color:var(--text2);margin-bottom:36px;line-height:1.65}
+.join-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* Partners */
+#partners{padding:60px 0;background:var(--navy2);overflow:hidden;border-top:1px solid var(--border)}
+.partners-label{text-align:center;font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:28px}
+.marquee-wrap{overflow:hidden;position:relative}
+.marquee-wrap::before,.marquee-wrap::after{
+  content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none;
+}
+.marquee-wrap::before{left:0;background:linear-gradient(90deg,var(--navy2),transparent)}
+.marquee-wrap::after{right:0;background:linear-gradient(-90deg,var(--navy2),transparent)}
+.marquee-track{display:flex;gap:48px;width:max-content;animation:marquee 30s linear infinite}
+.marquee-track:hover{animation-play-state:paused}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.partner-pill{
+  background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:40px;
+  padding:10px 24px;font-size:13px;font-weight:600;color:var(--text2);white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+}
+.partner-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.6}
+
+/* Footer */
+footer{
+  background:var(--navy2);border-top:1px solid var(--border);
+  padding:60px 40px 32px;
+}
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+.footer-brand .logo{font-size:20px;font-weight:800;color:var(--accent);letter-spacing:-0.5px;margin-bottom:12px}
+.footer-brand p{font-size:13px;color:var(--text3);line-height:1.65;max-width:260px}
+.footer-col h4{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+.footer-col a{display:block;font-size:13px;color:var(--text2);margin-bottom:10px;transition:color .15s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{
+  border-top:1px solid var(--border);padding-top:24px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;color:var(--text3);flex-wrap:wrap;gap:12px;
+}
+
+/* ===== AUTH PAGES ===== */
+.auth-page{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:100px 24px 40px;
+  background:radial-gradient(ellipse at 60% 20%,rgba(0,212,170,.07) 0%,transparent 60%),var(--navy);
+}
+.auth-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r24);
+  padding:44px;width:100%;max-width:440px;
+  box-shadow:var(--shadow);
+}
+.auth-logo{text-align:center;margin-bottom:8px;font-size:24px;font-weight:800;color:var(--accent)}
+.auth-title{font-size:22px;font-weight:700;text-align:center;margin-bottom:4px}
+.auth-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:32px}
+.form-group{margin-bottom:18px}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;letter-spacing:.3px}
+.form-input{
+  width:100%;padding:11px 14px;
+  background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r8);
+  color:#fff;font-size:14px;outline:none;transition:border-color .15s;
+}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:var(--text3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.err-msg{color:#f87171;font-size:12px;margin-top:6px;display:none}
+.auth-divider{text-align:center;font-size:12px;color:var(--text3);margin:20px 0;position:relative}
+.auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:44%;height:1px;background:var(--border)}
+.auth-divider::before{left:0}
+.auth-divider::after{right:0}
+.auth-link{color:var(--accent);cursor:pointer;font-size:13px}
+.auth-link:hover{text-decoration:underline}
+
+/* ===== DASHBOARD ===== */
+#dashboard{display:none;padding-top:64px}
+#dash-nav{
+  position:fixed;top:64px;left:0;right:0;z-index:900;
+  background:var(--navy2);border-bottom:1px solid var(--border);
+  height:48px;display:flex;align-items:center;padding:0 32px;gap:4px;
+}
+.dash-tab{
+  padding:5px 16px;border-radius:var(--r8);font-size:13px;font-weight:500;
+  color:var(--text2);cursor:pointer;border:none;background:none;transition:all .15s;
+}
+.dash-tab:hover{background:rgba(255,255,255,.06);color:#fff}
+.dash-tab.active{background:rgba(0,212,170,.12);color:var(--accent)}
+#dash-user-area{margin-left:auto;display:flex;align-items:center;gap:12px}
+.user-chip{
+  display:flex;align-items:center;gap:8px;
+  background:var(--card2);border:1px solid var(--border);border-radius:20px;
+  padding:4px 14px 4px 4px;font-size:12px;font-weight:500;
+}
+.user-avatar{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:#fff;
+}
+.dash-content{padding:32px;max-width:1200px;margin:0 auto;padding-top:calc(64px + 48px + 32px)}
+
+/* DASH PAGES */
+.dash-page{display:none}
+.dash-page.active{display:block}
+
+/* Page Header */
+.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.page-hdr h1{font-size:22px;font-weight:700;letter-spacing:-.5px}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r16);padding:22px}
+.card-sm{padding:16px 18px}
+.card-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:16px}
+.card:hover{border-color:var(--border2)}
+
+/* Stat chips */
+.stat-chip{background:var(--card2);border:1px solid var(--border);border-radius:var(--r12);padding:18px}
+.stat-chip .val{font-size:26px;font-weight:800;color:#fff;letter-spacing:-1px}
+.stat-chip .lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.stat-chip .trend{font-size:11px;margin-top:6px}
+.trend-up{color:var(--green)}
+.trend-dn{color:var(--red)}
+
+/* Grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.g-main{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+
+/* Table */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--text3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;border-bottom:1px solid var(--border)}
+td{padding:11px 14px;border-bottom:1px solid rgba(30,58,92,.5);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015);cursor:pointer}
+
+/* Avatar */
+.av{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.av-lg{width:60px;height:60px;font-size:20px}
+.av-sm{width:28px;height:28px;font-size:10px}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;gap:4px}
+.badge-win{background:rgba(34,197,94,.12);color:#4ade80}
+.badge-loss{background:rgba(239,68,68,.12);color:#f87171}
+.badge-pending{background:rgba(148,163,184,.1);color:#94a3b8}
+.badge-gold{background:rgba(245,166,35,.1);color:#f5a623}
+.badge-blue{background:rgba(0,153,255,.1);color:#38bdf8}
+.badge-green{background:rgba(34,197,94,.1);color:#4ade80}
+.badge-gray{background:rgba(92,122,150,.1);color:#94a3b8}
+
+/* Rating badge */
+.r-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+
+/* Match row */
+.match-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(30,58,92,.4)}
+.match-item:last-child{border-bottom:none}
+
+/* Progress bar */
+.prog{background:var(--card2);border-radius:4px;height:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .5s}
+
+/* Form inside dashboard */
+.d-form .form-group{margin-bottom:16px}
+.d-form .form-label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:5px}
+.d-form input,.d-form select,.d-form textarea{
+  width:100%;padding:10px 13px;background:var(--card2);border:1.5px solid var(--border);
+  border-radius:var(--r8);color:#fff;font-size:13px;outline:none;transition:border-color .15s;
+}
+.d-form input:focus,.d-form select:focus,.d-form textarea:focus{border-color:var(--accent)}
+.d-form select option{background:var(--card2)}
+.d-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Rank chip */
+.rank-num{color:var(--text3);font-weight:700;font-size:13px;width:28px;text-align:center}
+
+/* Search */
+.search-wrap{position:relative;margin-bottom:20px}
+.search-wrap input{padding-left:38px}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none}
+
+/* Notification toast */
+.toast{
+  position:fixed;bottom:32px;right:32px;z-index:9999;
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--r12);
+  padding:14px 20px;font-size:13px;min-width:280px;max-width:360px;
+  box-shadow:var(--shadow);transform:translateY(80px);opacity:0;transition:all .3s;
+  display:flex;align-items:center;gap:10px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success .toast-dot{background:var(--green)}
+.toast.error .toast-dot{background:var(--red)}
+.toast-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Modal */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;
+  align-items:center;justify-content:center;padding:20px;
+}
+.overlay.open{display:flex}
+.modal{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r24);
+  padding:36px;width:100%;max-width:480px;position:relative;max-height:90vh;overflow-y:auto;
+}
+.modal-close{
+  position:absolute;top:16px;right:16px;background:rgba(255,255,255,.06);
+  border:none;color:var(--text2);width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;
+}
+.modal-close:hover{background:rgba(255,255,255,.12);color:#fff}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:22px}
+
+/* Rating ring display */
+.rating-display{text-align:center;padding:20px 0}
+.rating-big{font-size:56px;font-weight:900;letter-spacing:-3px;color:var(--accent)}
+.rating-tier{font-size:14px;font-weight:600;margin-top:4px}
+
+/* Events cards */
+.event-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--r16);
+  padding:22px;transition:border-color .2s;
+}
+.event-card:hover{border-color:var(--border2)}
+
+/* Tab content */
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.inner-tabs{display:flex;gap:2px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:0}
+.inner-tab{padding:8px 18px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.inner-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* Rating change preview */
+.rc-preview{background:var(--card2);border-radius:var(--r12);padding:16px;border:1px solid var(--border)}
+.rc-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 0;border-bottom:1px solid rgba(30,58,92,.4)}
+.rc-row:last-child{border-bottom:none}
+
+/* Profile stats */
+.profile-header{background:linear-gradient(135deg,var(--card2),var(--card3));border:1px solid var(--border);border-radius:var(--r16);padding:28px;margin-bottom:20px;display:flex;align-items:center;gap:20px}
+
+/* Responsive */
+@media(max-width:900px){
+  .g2,.g3,.g4,.g-main,.features-grid,.footer-grid{grid-template-columns:1fr}
+  .stats-container{grid-template-columns:1fr}
+  .stat-block{border-right:none;border-bottom:1px solid var(--border);padding:24px 0}
+  .stat-block:last-child{border-bottom:none}
+  #main-nav{padding:0 20px}
+  .hero-stats{gap:28px}
+  .dash-content{padding:20px;padding-top:calc(64px + 48px + 20px)}
+  .form-row,.d-form .form-row{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  #dash-nav{overflow-x:auto;gap:2px}
+  .dash-tab{white-space:nowrap;font-size:12px;padding:5px 12px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast" class="toast">
+  <div class="toast-dot"></div>
+  <span id="toast-msg">Action completed</span>
+</div>
+
+<!-- ============================= LANDING ============================= -->
+<div id="view-landing" class="view active">
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <div class="nav-logo" onclick="showView('landing')">DURP<span>.gg</span></div>
+    <div class="nav-links">
+      <button class="nav-link" onclick="scrollTo('#features')">Ratings</button>
+      <button class="nav-link" onclick="scrollTo('#join-section')">Rankings</button>
+      <button class="nav-link" onclick="scrollTo('#partners')">Partners</button>
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-outline btn-sm" onclick="showView('login')">LOGIN</button>
+      <button class="btn btn-accent btn-sm" onclick="showView('signup')">SIGN UP</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div id="hero-bg">
+      <div class="hero-orb orb1"></div>
+      <div class="hero-orb orb2"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        Now live — join your private group
+      </div>
+      <h1>THE WORLD'S MOST<br><span class="accent">ACCURATE RATING</span></h1>
+      <p>Join thousands of rated players in logging matches, building community, and tracking your improvement over time.</p>
+      <div class="hero-cta">
+        <button class="btn btn-accent btn-lg" onclick="showView('signup')">JOIN NOW →</button>
+        <button class="btn btn-outline btn-lg" onclick="showView('login')">LOGIN</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="num" id="cnt-players">0</div>
+          <div class="lbl">Rated Players</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num" id="cnt-matches">0</div>
+          <div class="lbl">Matches Logged</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num" id="cnt-clubs">0</div>
+          <div class="lbl">Active Clubs</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATFORM STATS -->
+  <section id="platform-stats">
+    <div class="stats-container">
+      <div class="stat-block">
+        <div class="big"><span id="hero-big1">12,000</span>+</div>
+        <div class="desc">Clubs Worldwide</div>
+      </div>
+      <div class="stat-block">
+        <div class="big"><span id="hero-big2">183</span></div>
+        <div class="desc">Countries</div>
+      </div>
+      <div class="stat-block">
+        <div class="big"><span id="hero-big3">10</span>M+</div>
+        <div class="desc">Matches Logged</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="features">
+    <div class="section-eyebrow">How it works</div>
+    <h2 class="section-title">Join the fastest growing<br>rating platform</h2>
+    <p class="section-sub">Our system syncs with all major platforms. Results are sent directly to keep your rating accurate and up-to-date.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,212,170,.1)">🎯</div>
+        <h3>Elo-Based Algorithm</h3>
+        <p>Your rating updates after every match based on opponent strength and match outcome. The more matches you play, the more reliable your rating becomes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,153,255,.1)">📊</div>
+        <h3>Live Leaderboards</h3>
+        <p>See exactly where you stand among all players. Rankings update instantly after every logged match so you always know your current standing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(245,166,35,.1)">🏆</div>
+        <h3>Events & Tournaments</h3>
+        <p>Create and manage events for your club. Register players, track bracket results, and automatically update ratings from tournament outcomes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(139,92,246,.1)">👥</div>
+        <h3>Club Management</h3>
+        <p>Build your private community. Invite members, track group progress, and see how your club competes against others in your league.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(236,72,153,.1)">📈</div>
+        <h3>Rating History</h3>
+        <p>See how your rating has changed over time. Identify trends, measure improvement, and celebrate milestones as you move up the tiers.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(34,197,94,.1)">⚖️</div>
+        <h3>Fair Matchmaking</h3>
+        <p>Beating a stronger opponent earns more points. Losing to a weaker one costs more. Every result is weighted to reflect its true competitive significance.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- JOIN CTA -->
+  <section id="join-section">
+    <div class="join-inner">
+      <div class="section-eyebrow">Get Started Today</div>
+      <h2>Ready to know your<br>true rating?</h2>
+      <p>Create your free account and start logging matches today. Your rating begins the moment you play your first match.</p>
+      <div class="join-btns">
+        <button class="btn btn-accent btn-lg" onclick="showView('signup')">CREATE FREE ACCOUNT</button>
+        <button class="btn btn-outline btn-lg" onclick="showView('login')">I HAVE AN ACCOUNT</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTNERS -->
+  <section id="partners">
+    <div class="partners-label">Trusted by clubs &amp; platforms worldwide</div>
+    <div class="marquee-wrap">
+      <div class="marquee-track" id="marquee-track">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">DURP.gg</div>
+          <p>The world's most accurate private rating system. Built for clubs, leagues, and communities who want fair, reliable ratings.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Ratings</h4>
+          <a onclick="showView('signup')">Search Players</a>
+          <a onclick="showView('signup')">How It Works</a>
+          <a onclick="showView('signup')">Get Rated</a>
+          <a onclick="showView('signup')">Support</a>
+        </div>
+        <div class="footer-col">
+          <h4>Rankings</h4>
+          <a onclick="showView('signup')">Top Players</a>
+          <a onclick="showView('signup')">Club Rankings</a>
+          <a onclick="showView('signup')">Events</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a>Partners</a>
+          <a>Blog</a>
+          <a>Start a Club</a>
+          <a>Careers</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 DURP.gg — Private Rating Platform</span>
+        <div style="display:flex;gap:20px">
+          <a>Privacy Policy</a>
+          <a>Terms of Service</a>
+          <a>Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div><!-- /landing -->
+
+<!-- ============================= LOGIN ============================= -->
+<div id="view-login" class="view">
+  <nav id="main-nav" style="position:fixed;top:0;left:0;right:0;z-index:1000;height:64px;display:flex;align-items:center;padding:0 40px;background:rgba(10,22,40,.97);border-bottom:1px solid var(--border)">
+    <div class="nav-logo" onclick="showView('landing')">DURP<span style="color:#fff">.gg</span></div>
+  </nav>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">DURP.gg</div>
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-sub">Log in to access your rating dashboard</div>
+      <div class="form-group">
+        <label class="form-label">Username or Email</label>
+        <input class="form-input" type="text" id="li-user" placeholder="Enter your username or email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="li-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="err-msg" id="li-err"></div>
+      <button class="btn btn-accent" style="width:100%;padding:13px;font-size:14px;margin-top:4px;border-radius:var(--r8)" onclick="doLogin()">LOG IN</button>
+      <div class="auth-divider">or</div>
+      <p style="text-align:center;font-size:13px;color:var(--text2)">Don't have an account? <span class="auth-link" onclick="showView('signup')">Sign up free</span></p>
+      <p style="text-align:center;font-size:12px;color:var(--text3);margin-top:16px">
+        <strong style="color:var(--text2)">Demo account:</strong> username <code style="background:var(--card2);padding:2px 6px;border-radius:4px;color:var(--accent)">demo</code> / password <code style="background:var(--card2);padding:2px 6px;border-radius:4px;color:var(--accent)">demo123</code>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= SIGNUP ============================= -->
+<div id="view-signup" class="view">
+  <nav id="main-nav" style="position:fixed;top:0;left:0;right:0;z-index:1000;height:64px;display:flex;align-items:center;padding:0 40px;background:rgba(10,22,40,.97);border-bottom:1px solid var(--border)">
+    <div class="nav-logo" onclick="showView('landing')">DURP<span style="color:#fff">.gg</span></div>
+  </nav>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">DURP.gg</div>
+      <div class="auth-title">Create your account</div>
+      <div class="auth-sub">Join your private rating community</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input" type="text" id="su-fname" placeholder="First">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-input" type="text" id="su-lname" placeholder="Last">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" type="text" id="su-user" placeholder="Choose a username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="su-email" placeholder="you@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="su-pass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')doSignup()">
+      </div>
+      <div class="err-msg" id="su-err"></div>
+      <button class="btn btn-accent" style="width:100%;padding:13px;font-size:14px;margin-top:4px;border-radius:var(--r8)" onclick="doSignup()">CREATE ACCOUNT</button>
+      <div class="auth-divider">or</div>
+      <p style="text-align:center;font-size:13px;color:var(--text2)">Already have an account? <span class="auth-link" onclick="showView('login')">Log in</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= DASHBOARD ============================= -->
+<div id="dashboard">
+  <!-- DASH NAV -->
+  <div id="dash-nav">
+    <button class="dash-tab active" onclick="showDashPage('overview',this)">Overview</button>
+    <button class="dash-tab" onclick="showDashPage('players',this)">Players</button>
+    <button class="dash-tab" onclick="showDashPage('log-match',this)">Log Match</button>
+    <button class="dash-tab" onclick="showDashPage('leaderboard',this)">Rankings</button>
+    <button class="dash-tab" onclick="showDashPage('events',this)">Events</button>
+    <button class="dash-tab" onclick="showDashPage('my-profile',this)">My Profile</button>
+    <div id="dash-user-area">
+      <div class="user-chip">
+        <div class="user-avatar" id="dash-av" style="background:#00d4aa;color:#0a1628">?</div>
+        <span id="dash-username">User</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="dash-content">
+
+    <!-- OVERVIEW -->
+    <div id="dp-overview" class="dash-page active">
+      <div class="page-hdr">
+        <h1>Dashboard</h1>
+        <button class="btn btn-accent btn-sm" onclick="showDashPage('log-match',document.querySelector('[onclick*=\"log-match\"]'))">+ Log Match</button>
+      </div>
+      <div class="g4" style="margin-bottom:20px">
+        <div class="stat-chip"><div class="val" id="ov-rating">—</div><div class="lbl">My Rating</div></div>
+        <div class="stat-chip"><div class="val" id="ov-rank">—</div><div class="lbl">My Rank</div></div>
+        <div class="stat-chip"><div class="val" id="ov-matches">0</div><div class="lbl">Matches Played</div></div>
+        <div class="stat-chip"><div class="val" id="ov-winrate">—</div><div class="lbl">Win Rate</div></div>
+      </div>
+      <div class="g-main">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Recent Matches</div>
+            <div id="ov-recent-matches"><p style="color:var(--text3);font-size:13px">No matches yet. <span style="color:var(--accent);cursor:pointer" onclick="showDashPage('log-match',document.querySelector('[onclick*=log-match]'))">Log your first →</span></p></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Community Activity</div>
+            <div id="ov-community"><p style="color:var(--text3);font-size:13px">No activity yet.</p></div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Top Players</div>
+            <div id="ov-top-players"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Platform Stats</div>
+            <div id="ov-platform-stats"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAYERS -->
+    <div id="dp-players" class="dash-page">
+      <div class="page-hdr">
+        <h1>Players</h1>
+        <button class="btn btn-accent btn-sm" onclick="openModal('add-player-modal')">+ Add Player</button>
+      </div>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="form-input" type="text" id="player-search" placeholder="Search players by name…" oninput="renderPlayers()">
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th style="width:40px">#</th>
+              <th>Player</th>
+              <th>Rating</th>
+              <th>Tier</th>
+              <th>W / L</th>
+              <th>Win %</th>
+              <th>Matches</th>
+            </tr></thead>
+            <tbody id="players-tbody"></tbody>
+          </table>
+        </div>
+        <div id="players-empty" style="padding:40px;text-align:center;color:var(--text3)">No players yet.</div>
+      </div>
+    </div>
+
+    <!-- LOG MATCH -->
+    <div id="dp-log-match" class="dash-page">
+      <div class="page-hdr"><h1>Log a Match</h1></div>
+      <div class="g2">
+        <div class="card d-form">
+          <div class="card-title">Match Details</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Sport</label>
+              <select id="m-sport"><option>Pickleball</option><option>Tennis</option><option>Padel</option><option>Badminton</option><option>Table Tennis</option><option>Squash</option><option>Other</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date</label>
+              <input type="date" id="m-date">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Match Type</label>
+            <select id="m-type" onchange="updateMatchType()">
+              <option value="singles">Singles (1 vs 1)</option>
+              <option value="doubles">Doubles (2 vs 2)</option>
+            </select>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 36px 1fr;gap:8px;align-items:start;margin-bottom:16px">
+            <div>
+              <label class="form-label">Player A</label>
+              <select id="m-p1" onchange="previewRatings()"><option value="">— Select —</option></select>
+              <div id="m-p1b-wrap" style="display:none;margin-top:8px">
+                <label class="form-label">Partner A2</label>
+                <select id="m-p1b"><option value="">— Select —</option></select>
+              </div>
+            </div>
+            <div style="text-align:center;padding-top:30px;color:var(--text3);font-weight:700;font-size:13px">VS</div>
+            <div>
+              <label class="form-label">Player B</label>
+              <select id="m-p2" onchange="previewRatings()"><option value="">— Select —</option></select>
+              <div id="m-p2b-wrap" style="display:none;margin-top:8px">
+                <label class="form-label">Partner B2</label>
+                <select id="m-p2b"><option value="">— Select —</option></select>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Score</label>
+              <input type="text" id="m-score" placeholder="e.g. 11-7, 11-4">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Winner</label>
+              <select id="m-winner" onchange="previewRatings()">
+                <option value="A">Team A wins</option>
+                <option value="B">Team B wins</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notes (optional)</label>
+            <textarea id="m-notes" rows="2" placeholder="Any match notes…"></textarea>
+          </div>
+          <button class="btn btn-accent" style="width:100%;padding:13px;border-radius:var(--r8)" onclick="logMatch()">Log Match &amp; Update Ratings</button>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Rating Change Preview</div>
+            <div id="rating-preview"><p style="color:var(--text3);font-size:13px">Select two players to see projected rating changes.</p></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Recent Matches</div>
+            <div id="log-recent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div id="dp-leaderboard" class="dash-page">
+      <div class="page-hdr">
+        <h1>Rankings</h1>
+        <select id="lb-sport-filter" onchange="renderLeaderboard()" style="background:var(--card2);border:1px solid var(--border);color:#fff;padding:7px 14px;border-radius:var(--r8);font-size:12px">
+          <option value="">All Sports</option>
+          <option>Pickleball</option><option>Tennis</option><option>Padel</option><option>Badminton</option><option>Table Tennis</option><option>Squash</option>
+        </select>
+      </div>
+      <div class="g4" style="margin-bottom:20px">
+        <div class="stat-chip"><div class="val" id="lb-total">0</div><div class="lbl">Players</div></div>
+        <div class="stat-chip"><div class="val" id="lb-matches">0</div><div class="lbl">Matches</div></div>
+        <div class="stat-chip"><div class="val" id="lb-avg">—</div><div class="lbl">Avg Rating</div></div>
+        <div class="stat-chip"><div class="val" id="lb-top">—</div><div class="lbl">Top Rating</div></div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th style="width:48px">Rank</th>
+              <th>Player</th>
+              <th>Rating</th>
+              <th>Tier</th>
+              <th>Matches</th>
+              <th>Win Rate</th>
+              <th>Streak</th>
+              <th>Change</th>
+            </tr></thead>
+            <tbody id="lb-tbody"></tbody>
+          </table>
+        </div>
+        <div id="lb-empty" style="padding:40px;text-align:center;color:var(--text3)">No players yet.</div>
+      </div>
+    </div>
+
+    <!-- EVENTS -->
+    <div id="dp-events" class="dash-page">
+      <div class="page-hdr">
+        <h1>Events</h1>
+        <button class="btn btn-accent btn-sm" onclick="openModal('add-event-modal')">+ Create Event</button>
+      </div>
+      <div id="events-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px">
+        <div class="event-card" style="text-align:center;padding:40px;color:var(--text3)">No events yet. <span style="color:var(--accent);cursor:pointer" onclick="openModal('add-event-modal')">Create one →</span></div>
+      </div>
+    </div>
+
+    <!-- MY PROFILE -->
+    <div id="dp-my-profile" class="dash-page">
+      <div class="page-hdr"><h1>My Profile</h1></div>
+      <div id="profile-content"></div>
+    </div>
+
+  </div><!-- /dash-content -->
+</div><!-- /dashboard -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- Add Player -->
+<div class="overlay" id="add-player-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('add-player-modal')">✕</button>
+    <div class="modal-title">Add Player</div>
+    <div class="d-form">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">First Name</label><input type="text" id="ap-fname" placeholder="First name"></div>
+        <div class="form-group"><label class="form-label">Last Name</label><input type="text" id="ap-lname" placeholder="Last name"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email (optional)</label><input type="email" id="ap-email" placeholder="player@email.com"></div>
+      <div class="form-group"><label class="form-label">Starting Rating</label><input type="number" id="ap-rating" value="1000" min="100" max="3000"></div>
+      <div class="form-group"><label class="form-label">Notes</label><input type="text" id="ap-notes" placeholder="Optional notes"></div>
+      <div class="err-msg" id="ap-err"></div>
+      <button class="btn btn-accent" style="width:100%;padding:12px;border-radius:var(--r8);margin-top:4px" onclick="addPlayer()">Add Player</button>
+    </div>
+  </div>
+</div>
+
+<!-- Player Detail -->
+<div class="overlay" id="player-detail-modal">
+  <div class="modal" style="max-width:540px">
+    <button class="modal-close" onclick="closeModal('player-detail-modal')">✕</button>
+    <div id="player-detail-body"></div>
+  </div>
+</div>
+
+<!-- Add Event -->
+<div class="overlay" id="add-event-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('add-event-modal')">✕</button>
+    <div class="modal-title">Create Event</div>
+    <div class="d-form">
+      <div class="form-group"><label class="form-label">Event Name</label><input type="text" id="ev-name" placeholder="e.g. Summer Club Championship"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Date</label><input type="date" id="ev-date"></div>
+        <div class="form-group"><label class="form-label">Format</label>
+          <select id="ev-format"><option>Round Robin</option><option>Single Elimination</option><option>Double Elimination</option><option>Swiss</option><option>King of the Court</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Location</label><input type="text" id="ev-loc" placeholder="Venue or court location"></div>
+      <div class="form-group"><label class="form-label">Sport</label>
+        <select id="ev-sport"><option>Pickleball</option><option>Tennis</option><option>Padel</option><option>Badminton</option><option>Table Tennis</option><option>Other</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label><textarea id="ev-desc" rows="2" placeholder="Event details…"></textarea></div>
+      <button class="btn btn-accent" style="width:100%;padding:12px;border-radius:var(--r8);margin-top:4px" onclick="addEvent()">Create Event</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================== DB ==============================
+const DB_NAME = 'durp_db', DB_VER = 1;
+let db;
+
+function openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('users')) {
+        const us = d.createObjectStore('users', {keyPath:'id', autoIncrement:true});
+        us.createIndex('username','username',{unique:true});
+        us.createIndex('email','email',{unique:true});
+      }
+      if (!d.objectStoreNames.contains('players')) d.createObjectStore('players',{keyPath:'id',autoIncrement:true});
+      if (!d.objectStoreNames.contains('matches')) d.createObjectStore('matches',{keyPath:'id',autoIncrement:true});
+      if (!d.objectStoreNames.contains('events')) d.createObjectStore('events',{keyPath:'id',autoIncrement:true});
+      if (!d.objectStoreNames.contains('meta')) d.createObjectStore('meta',{keyPath:'key'});
+    };
+    req.onsuccess = e => { db = e.target.result; res(db); };
+    req.onerror = e => rej(e);
+  });
+}
+
+function dbGetAll(store) {
+  return new Promise((res,rej) => {
+    const tx = db.transaction(store,'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => res(req.result);
+    req.onerror = rej;
+  });
+}
+function dbGet(store, key) {
+  return new Promise((res,rej) => {
+    const tx = db.transaction(store,'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => res(req.result);
+    req.onerror = rej;
+  });
+}
+function dbPut(store, val) {
+  return new Promise((res,rej) => {
+    const tx = db.transaction(store,'readwrite');
+    const req = tx.objectStore(store).put(val);
+    req.onsuccess = () => res(req.result);
+    req.onerror = rej;
+  });
+}
+function dbAdd(store, val) {
+  return new Promise((res,rej) => {
+    const tx = db.transaction(store,'readwrite');
+    const req = tx.objectStore(store).add(val);
+    req.onsuccess = () => res(req.result);
+    req.onerror = rej;
+  });
+}
+function dbGetByIndex(store, idx, val) {
+  return new Promise((res,rej) => {
+    const tx = db.transaction(store,'readonly');
+    const req = tx.objectStore(store).index(idx).get(val);
+    req.onsuccess = () => res(req.result);
+    req.onerror = rej;
+  });
+}
+async function dbGetMeta(key) {
+  const r = await dbGet('meta', key);
+  return r ? r.value : null;
+}
+async function dbSetMeta(key, value) {
+  await dbPut('meta', {key, value});
+}
+
+// ============================== CRYPTO ==============================
+async function hashPassword(pw) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw + 'durp_salt_2026'));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ============================== STATE ==============================
+let currentUser = null;
+let allPlayers = [], allMatches = [], allEvents = [];
+
+async function loadAll() {
+  allPlayers = await dbGetAll('players');
+  allMatches = await dbGetAll('matches');
+  allEvents = await dbGetAll('events');
+}
+
+// ============================== VIEW ROUTING ==============================
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-'+name)?.classList.add('active');
+  document.getElementById('dashboard').style.display = 'none';
+  if (name === 'landing') animateCounters();
+  window.scrollTo(0,0);
+}
+
+function showDashboard() {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('dashboard').style.display = 'block';
+  updateDashNav();
+  showDashPage('overview', document.querySelector('.dash-tab'));
+  window.scrollTo(0,0);
+}
+
+function showDashPage(name, el) {
+  document.querySelectorAll('.dash-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('dp-'+name)?.classList.add('active');
+  if (el) { document.querySelectorAll('.dash-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+  if (name==='overview') renderOverview();
+  if (name==='players') renderPlayers();
+  if (name==='log-match') { populateMatchSelects(); renderLogRecent(); document.getElementById('m-date').value = today(); }
+  if (name==='leaderboard') renderLeaderboard();
+  if (name==='events') renderEvents();
+  if (name==='my-profile') renderProfile();
+}
+
+// ============================== AUTH ==============================
+async function doSignup() {
+  const fname = v('su-fname').trim(), lname = v('su-lname').trim();
+  const user = v('su-user').trim().toLowerCase(), email = v('su-email').trim().toLowerCase();
+  const pass = v('su-pass');
+  const err = document.getElementById('su-err');
+  err.style.display = 'none';
+  if (!fname || !user || !email || !pass) { showErr('su-err','Please fill in all required fields.'); return; }
+  if (pass.length < 6) { showErr('su-err','Password must be at least 6 characters.'); return; }
+  if (!/^[a-z0-9_]+$/.test(user)) { showErr('su-err','Username can only contain letters, numbers, and underscores.'); return; }
+  const existing = await dbGetByIndex('users','username',user);
+  if (existing) { showErr('su-err','Username already taken.'); return; }
+  const hash = await hashPassword(pass);
+  const uid = await dbAdd('users', {username:user, fname, lname, email, hash, createdAt:new Date().toISOString()});
+  // auto-create player profile
+  await dbAdd('players', {userId:uid, fname, lname, email, rating:1000, peakRating:1000, history:[{date:today(), rating:1000}], wins:0, losses:0, streak:0, streakType:null, sport:'All', addedAt:new Date().toISOString()});
+  await loadAll();
+  currentUser = {id:uid, username:user, fname, lname, email};
+  await dbSetMeta('session', currentUser);
+  clearSignup();
+  showDashboard();
+  toast('Welcome, '+fname+'! Your account is ready.', 'success');
+}
+
+async function doLogin() {
+  const userInput = v('li-user').trim().toLowerCase();
+  const pass = v('li-pass');
+  document.getElementById('li-err').style.display = 'none';
+  if (!userInput || !pass) { showErr('li-err','Enter your username/email and password.'); return; }
+  const hash = await hashPassword(pass);
+  const users = await dbGetAll('users');
+  const found = users.find(u => (u.username===userInput||u.email===userInput) && u.hash===hash);
+  if (!found) { showErr('li-err','Invalid username or password.'); return; }
+  currentUser = {id:found.id, username:found.username, fname:found.fname, lname:found.lname, email:found.email};
+  await dbSetMeta('session', currentUser);
+  await loadAll();
+  showDashboard();
+  toast('Welcome back, '+found.fname+'!', 'success');
+}
+
+async function doLogout() {
+  currentUser = null;
+  await dbSetMeta('session', null);
+  showView('landing');
+  toast('Logged out successfully.', 'success');
+}
+
+function clearSignup() {
+  ['su-fname','su-lname','su-user','su-email','su-pass'].forEach(id => { const el = document.getElementById(id); if(el)el.value=''; });
+}
+
+function updateDashNav() {
+  if (!currentUser) return;
+  document.getElementById('dash-username').textContent = currentUser.fname;
+  const av = document.getElementById('dash-av');
+  av.textContent = (currentUser.fname[0]+(currentUser.lname||'?')[0]).toUpperCase();
+  av.style.background = playerColor(currentUser.id || 0);
+}
+
+// ============================== PLAYERS ==============================
+async function addPlayer() {
+  const fname = v('ap-fname').trim(), lname = v('ap-lname').trim();
+  const email = v('ap-email').trim(), rating = parseInt(v('ap-rating'))||1000;
+  const notes = v('ap-notes').trim();
+  if (!fname) { showErr('ap-err','First name is required.'); return; }
+  await dbAdd('players', {fname, lname, email, notes, rating, peakRating:rating, history:[{date:today(),rating}], wins:0, losses:0, streak:0, streakType:null, addedAt:new Date().toISOString()});
+  await loadAll();
+  closeModal('add-player-modal');
+  ['ap-fname','ap-lname','ap-email','ap-notes'].forEach(id => { const el=document.getElementById(id); if(el)el.value=''; });
+  document.getElementById('ap-rating').value = '1000';
+  renderPlayers();
+  populateMatchSelects();
+  toast(fname+' '+lname+' added!', 'success');
+}
+
+function renderPlayers() {
+  const q = (document.getElementById('player-search')?.value||'').toLowerCase();
+  const sorted = [...allPlayers].sort((a,b) => b.rating - a.rating);
+  const filtered = sorted.filter(p => fullName(p).toLowerCase().includes(q) || (p.email||'').toLowerCase().includes(q));
+  const tbody = document.getElementById('players-tbody');
+  const empty = document.getElementById('players-empty');
+  if (!filtered.length) { if(tbody)tbody.innerHTML=''; if(empty)empty.style.display='block'; return; }
+  if(empty)empty.style.display='none';
+  tbody.innerHTML = filtered.map((p,i) => {
+    const t = tier(p.rating), win = winPct(p);
+    return `<tr onclick="showPlayerDetail(${p.id})">
+      <td><span class="rank-num">${i+1}</span></td>
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div class="av" style="background:${playerColor(p.id)}">${initials(p)}</div>
+        <div><div style="font-weight:500">${fullName(p)}</div>${p.email?`<div style="font-size:11px;color:var(--text3)">${p.email}</div>`:''}</div>
+      </div></td>
+      <td><span style="font-weight:700;font-size:15px">${p.rating}</span></td>
+      <td><span class="badge ${t.cls}">${t.label}</span></td>
+      <td><span style="color:var(--green)">${p.wins}W</span> / <span style="color:var(--red)">${p.losses}L</span></td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="prog" style="width:56px"><div class="prog-fill" style="width:${win}%"></div></div><span style="font-size:12px;color:var(--text2)">${win}%</span></div></td>
+      <td style="color:var(--text2)">${p.wins+p.losses}</td>
+    </tr>`;
+  }).join('');
+}
+
+function showPlayerDetail(id) {
+  const p = allPlayers.find(x => x.id === id);
+  if (!p) return;
+  const t = tier(p.rating);
+  const win = winPct(p);
+  const myMatches = allMatches.filter(m => m.p1===id||m.p2===id||(m.p1b&&m.p1b===id)||(m.p2b&&m.p2b===id)).slice(-8).reverse();
+  const matchRows = myMatches.map(m => {
+    const wonA = m.winner==='A';
+    const iAmA = m.p1===id || m.p1b===id;
+    const won = iAmA ? wonA : !wonA;
+    const oppId = iAmA ? m.p2 : m.p1;
+    const opp = allPlayers.find(x=>x.id===oppId);
+    return `<div class="match-item">
+      <span class="badge ${won?'badge-win':'badge-loss'}">${won?'W':'L'}</span>
+      <span style="flex:1;font-size:13px">vs <strong>${opp?fullName(opp):'Unknown'}</strong></span>
+      <span style="font-size:13px;color:${won?'var(--green)':'var(--red)'};font-weight:600">${m.score||'—'}</span>
+      <span style="font-size:11px;color:var(--text3)">${m.date}</span>
+    </div>`;
+  }).join('') || '<p style="color:var(--text3);font-size:13px">No matches yet.</p>';
+
+  const histSummary = p.history.slice(-5).map(h=>`${h.date}: <strong style="color:var(--accent)">${h.rating}</strong>`).join(' → ');
+  document.getElementById('player-detail-body').innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+      <div class="av av-lg" style="background:${playerColor(p.id)}">${initials(p)}</div>
+      <div>
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:4px">${fullName(p)}</h2>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="badge ${t.cls}">${t.label}</span>
+          <span style="font-size:18px;font-weight:800;color:var(--accent)">${p.rating}</span>
+        </div>
+        ${p.email?`<div style="font-size:12px;color:var(--text3);margin-top:4px">${p.email}</div>`:''}
+      </div>
+    </div>
+    <div class="g3" style="gap:10px;margin-bottom:22px">
+      <div class="stat-chip"><div class="val">${p.wins}</div><div class="lbl">Wins</div></div>
+      <div class="stat-chip"><div class="val">${p.losses}</div><div class="lbl">Losses</div></div>
+      <div class="stat-chip"><div class="val">${win}%</div><div class="lbl">Win Rate</div></div>
+    </div>
+    <div style="margin-bottom:18px">
+      <div class="card-title">Rating History</div>
+      <p style="font-size:12px;color:var(--text2);line-height:2">${histSummary||'No history.'}</p>
+      <div style="margin-top:8px;font-size:12px;color:var(--text3)">Peak: <span style="color:var(--gold);font-weight:700">${p.peakRating||p.rating}</span></div>
+    </div>
+    <div class="card-title">Recent Matches</div>
+    ${matchRows}`;
+  openModal('player-detail-modal');
+}
+
+// ============================== MATCH LOG ==============================
+function populateMatchSelects() {
+  ['m-p1','m-p2','m-p1b','m-p2b'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const old = el.value;
+    el.innerHTML = '<option value="">— Select —</option>' + allPlayers.map(p=>`<option value="${p.id}">${fullName(p)} (${p.rating})</option>`).join('');
+    el.value = old;
+  });
+  previewRatings();
+}
+
+function updateMatchType() {
+  const d = document.getElementById('m-type').value === 'doubles';
+  document.getElementById('m-p1b-wrap').style.display = d ? 'block':'none';
+  document.getElementById('m-p2b-wrap').style.display = d ? 'block':'none';
+}
+
+function previewRatings() {
+  const p1id = parseInt(document.getElementById('m-p1')?.value);
+  const p2id = parseInt(document.getElementById('m-p2')?.value);
+  const box = document.getElementById('rating-preview');
+  if (!box) return;
+  if (!p1id || !p2id || p1id===p2id) { box.innerHTML='<p style="color:var(--text3);font-size:13px">Select two different players to preview.</p>'; return; }
+  const p1 = allPlayers.find(x=>x.id===p1id);
+  const p2 = allPlayers.find(x=>x.id===p2id);
+  if (!p1||!p2) return;
+  const [rA_win, rB_win] = eloCalc(p1.rating, p2.rating, 1);
+  const [rA_los, rB_los] = eloCalc(p1.rating, p2.rating, 0);
+  box.innerHTML = `
+    <div class="rc-preview" style="margin-bottom:10px">
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">If <span style="color:#fff">${p1.fname}</span> wins:</div>
+      <div class="rc-row"><span>${fullName(p1)}</span><span style="color:var(--green);font-weight:700">+${rA_win-p1.rating} → ${rA_win}</span></div>
+      <div class="rc-row"><span>${fullName(p2)}</span><span style="color:var(--red);font-weight:700">${rB_win-p2.rating} → ${rB_win}</span></div>
+    </div>
+    <div class="rc-preview">
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">If <span style="color:#fff">${p2.fname}</span> wins:</div>
+      <div class="rc-row"><span>${fullName(p2)}</span><span style="color:var(--green);font-weight:700">+${rB_los-p2.rating} → ${rB_los}</span></div>
+      <div class="rc-row"><span>${fullName(p1)}</span><span style="color:var(--red);font-weight:700">${rA_los-p1.rating} → ${rA_los}</span></div>
+    </div>`;
+}
+
+async function logMatch() {
+  const p1id = parseInt(document.getElementById('m-p1').value);
+  const p2id = parseInt(document.getElementById('m-p2').value);
+  const doubles = document.getElementById('m-type').value === 'doubles';
+  const p1bid = doubles ? parseInt(document.getElementById('m-p1b').value)||null : null;
+  const p2bid = doubles ? parseInt(document.getElementById('m-p2b').value)||null : null;
+  const score = v('m-score').trim();
+  const winner = document.getElementById('m-winner').value;
+  const date = v('m-date') || today();
+  const notes = v('m-notes').trim();
+  const sport = document.getElementById('m-sport').value;
+
+  if (!p1id || !p2id) { toast('Please select both players.', 'error'); return; }
+  if (p1id === p2id) { toast('Players must be different.', 'error'); return; }
+
+  const p1 = allPlayers.find(x=>x.id===p1id);
+  const p2 = allPlayers.find(x=>x.id===p2id);
+  const p1b = p1bid ? allPlayers.find(x=>x.id===p1bid) : null;
+  const p2b = p2bid ? allPlayers.find(x=>x.id===p2bid) : null;
+
+  const ra = p1b ? Math.round((p1.rating + p1b.rating)/2) : p1.rating;
+  const rb = p2b ? Math.round((p2.rating + p2b.rating)/2) : p2.rating;
+  const scoreA = winner === 'A' ? 1 : 0;
+  const [nra, nrb] = eloCalc(ra, rb, scoreA);
+  const da = nra - ra, db = nrb - rb;
+
+  // Update players
+  const teamA = [p1, ...(p1b?[p1b]:[])];
+  const teamB = [p2, ...(p2b?[p2b]:[])];
+  for (const p of teamA) {
+    p.rating = Math.max(100, p.rating + da);
+    p.peakRating = Math.max(p.peakRating||p.rating, p.rating);
+    p.history.push({date, rating:p.rating});
+    if (winner==='A') { p.wins++; p.streak = p.streakType==='W' ? p.streak+1 : 1; p.streakType='W'; }
+    else { p.losses++; p.streak = p.streakType==='L' ? p.streak+1 : 1; p.streakType='L'; }
+    await dbPut('players', p);
+  }
+  for (const p of teamB) {
+    p.rating = Math.max(100, p.rating + db);
+    p.peakRating = Math.max(p.peakRating||p.rating, p.rating);
+    p.history.push({date, rating:p.rating});
+    if (winner==='B') { p.wins++; p.streak = p.streakType==='W' ? p.streak+1 : 1; p.streakType='W'; }
+    else { p.losses++; p.streak = p.streakType==='L' ? p.streak+1 : 1; p.streakType='L'; }
+    await dbPut('players', p);
+  }
+
+  const matchId = await dbAdd('matches', {p1:p1id, p2:p2id, p1b:p1bid||null, p2b:p2bid||null, score, winner, date, notes, sport, da, db, loggedBy:currentUser?.id, loggedAt:new Date().toISOString()});
+  await loadAll();
+  document.getElementById('m-score').value='';
+  document.getElementById('m-notes').value='';
+  renderLogRecent();
+  previewRatings();
+  populateMatchSelects();
+  const winnerName = winner==='A' ? fullName(p1) : fullName(p2);
+  toast(`Match logged! ${winnerName} wins. Ratings updated.`, 'success');
+}
+
+function renderLogRecent() {
+  const el = document.getElementById('log-recent');
+  if (!el) return;
+  const recent = allMatches.slice(-5).reverse();
+  if (!recent.length) { el.innerHTML='<p style="color:var(--text3);font-size:13px">No matches yet.</p>'; return; }
+  el.innerHTML = recent.map(m => {
+    const p1 = allPlayers.find(x=>x.id===m.p1);
+    const p2 = allPlayers.find(x=>x.id===m.p2);
+    return `<div class="match-item">
+      <div class="av av-sm" style="background:${playerColor(m.p1)}">${initials(p1||{fname:'?',lname:'?'})}</div>
+      <div style="flex:1;font-size:12px"><strong>${p1?p1.fname:'?'}</strong> vs <strong>${p2?p2.fname:'?'}</strong></div>
+      <span class="badge badge-win" style="font-size:10px">${m.winner==='A'?(p1?p1.fname:'A'):(p2?p2.fname:'B')} W</span>
+      <span style="font-size:11px;color:var(--text3)">${m.score||'—'}</span>
+    </div>`;
+  }).join('');
+}
+
+// ============================== LEADERBOARD ==============================
+function renderLeaderboard() {
+  const sportF = document.getElementById('lb-sport-filter')?.value || '';
+  let players = [...allPlayers].sort((a,b) => b.rating-a.rating);
+  const tbody = document.getElementById('lb-tbody');
+  const empty = document.getElementById('lb-empty');
+  document.getElementById('lb-total').textContent = players.length;
+  document.getElementById('lb-matches').textContent = allMatches.length;
+  if (players.length) {
+    const avg = Math.round(players.reduce((a,p)=>a+p.rating,0)/players.length);
+    document.getElementById('lb-avg').textContent = avg;
+    document.getElementById('lb-top').textContent = Math.max(...players.map(p=>p.rating));
+  }
+  if (!players.length) { if(tbody)tbody.innerHTML=''; if(empty)empty.style.display='block'; return; }
+  if(empty)empty.style.display='none';
+  const medal = i => i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+  tbody.innerHTML = players.map((p,i) => {
+    const t = tier(p.rating), win = winPct(p);
+    const change = p.history.length>1 ? p.rating - p.history[p.history.length-2].rating : 0;
+    const streak = p.streak ? (p.streakType==='W'?`<span class="trend-up">▲${p.streak}W</span>`:`<span class="trend-dn">▼${p.streak}L</span>`) : '—';
+    return `<tr onclick="showPlayerDetail(${p.id})">
+      <td><span class="rank-num">${medal(i)}</span></td>
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div class="av" style="background:${playerColor(p.id)}">${initials(p)}</div>
+        <span style="font-weight:500">${fullName(p)}</span>
+      </div></td>
+      <td><span style="font-size:16px;font-weight:800;color:var(--accent)">${p.rating}</span></td>
+      <td><span class="badge ${t.cls}">${t.label}</span></td>
+      <td style="color:var(--text2)">${p.wins+p.losses}</td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="prog" style="width:50px"><div class="prog-fill" style="width:${win}%"></div></div><span style="font-size:12px;color:var(--text2)">${win}%</span></div></td>
+      <td>${streak}</td>
+      <td>${change>=0?`<span class="trend-up">+${change}</span>`:`<span class="trend-dn">${change}</span>`}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ============================== EVENTS ==============================
+async function addEvent() {
+  const name = v('ev-name').trim();
+  if (!name) { toast('Event name required.','error'); return; }
+  await dbAdd('events', {
+    name, date:v('ev-date'), format:document.getElementById('ev-format').value,
+    loc:v('ev-loc').trim(), sport:document.getElementById('ev-sport').value,
+    desc:v('ev-desc').trim(), participants:[], createdAt:new Date().toISOString(), createdBy:currentUser?.id
+  });
+  await loadAll();
+  closeModal('add-event-modal');
+  ['ev-name','ev-date','ev-loc','ev-desc'].forEach(id => {const el=document.getElementById(id);if(el)el.value='';});
+  renderEvents();
+  toast('Event created!', 'success');
+}
+
+function renderEvents() {
+  const grid = document.getElementById('events-grid');
+  if (!grid) return;
+  if (!allEvents.length) { grid.innerHTML='<div class="event-card" style="text-align:center;padding:40px;color:var(--text3)">No events yet. <span style="color:var(--accent);cursor:pointer" onclick="openModal(\'add-event-modal\')">Create one →</span></div>'; return; }
+  const sportIcons = {Pickleball:'🏓',Tennis:'🎾',Padel:'🏸',Badminton:'🏸','Table Tennis':'🏓',Other:'🏆'};
+  const formatColors = {'Round Robin':'badge-blue','Single Elimination':'badge-gold','Double Elimination':'badge-gold','Swiss':'badge-green','King of the Court':'badge-win'};
+  grid.innerHTML = allEvents.map(ev => `
+    <div class="event-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div style="font-size:22px">${sportIcons[ev.sport]||'🏆'}</div>
+        <span class="badge ${formatColors[ev.format]||'badge-gray'}">${ev.format}</span>
+      </div>
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:6px">${ev.name}</h3>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">${ev.sport}${ev.date?' · '+ev.date:''}${ev.loc?' · '+ev.loc:''}</div>
+      ${ev.desc?`<p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.55">${ev.desc}</p>`:''}
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-accent btn-sm" onclick="joinEvent(${ev.id})">Register</button>
+        <span style="font-size:12px;color:var(--text3);align-self:center">${(ev.participants||[]).length} registered</span>
+      </div>
+    </div>`).join('');
+}
+
+async function joinEvent(id) {
+  const ev = allEvents.find(e=>e.id===id);
+  if (!ev) return;
+  if (!currentUser) { toast('Log in to register.','error'); return; }
+  if (ev.participants.includes(currentUser.id)) { toast('Already registered!','error'); return; }
+  ev.participants.push(currentUser.id);
+  await dbPut('events', ev);
+  await loadAll();
+  renderEvents();
+  toast('Registered for '+ev.name+'!','success');
+}
+
+// ============================== OVERVIEW ==============================
+function renderOverview() {
+  const myPlayer = currentUser ? allPlayers.find(p=>p.userId===currentUser.id) : null;
+  const sorted = [...allPlayers].sort((a,b)=>b.rating-a.rating);
+  const myRank = myPlayer ? sorted.findIndex(p=>p.id===myPlayer.id)+1 : null;
+  document.getElementById('ov-rating').textContent = myPlayer ? myPlayer.rating : '—';
+  document.getElementById('ov-rank').textContent = myRank ? '#'+myRank : '—';
+  document.getElementById('ov-matches').textContent = myPlayer ? (myPlayer.wins+myPlayer.losses) : 0;
+  document.getElementById('ov-winrate').textContent = myPlayer ? winPct(myPlayer)+'%' : '—';
+
+  // Recent matches
+  const rmEl = document.getElementById('ov-recent-matches');
+  const recent = allMatches.slice(-6).reverse();
+  if (!recent.length) { rmEl.innerHTML='<p style="color:var(--text3);font-size:13px">No matches yet. <span style="color:var(--accent);cursor:pointer" onclick="showDashPage(\'log-match\',document.querySelectorAll(\'.dash-tab\')[2])">Log your first →</span></p>'; }
+  else rmEl.innerHTML = recent.map(m=>{
+    const p1=allPlayers.find(x=>x.id===m.p1), p2=allPlayers.find(x=>x.id===m.p2);
+    const w = m.winner==='A'?p1:p2;
+    return `<div class="match-item">
+      <div class="av av-sm" style="background:${playerColor(m.p1)}">${initials(p1||{fname:'?',lname:'?'})}</div>
+      <div style="flex:1;font-size:13px"><strong>${p1?fullName(p1):'?'}</strong> <span style="color:var(--text3)">vs</span> <strong>${p2?fullName(p2):'?'}</strong></div>
+      <span class="badge badge-win" style="font-size:10px">${w?w.fname:'?'} W</span>
+      <span style="font-size:12px;font-weight:600;color:var(--accent)">${m.score||'—'}</span>
+    </div>`;
+  }).join('');
+
+  // Top Players
+  const tpEl = document.getElementById('ov-top-players');
+  tpEl.innerHTML = sorted.slice(0,5).map((p,i)=>{
+    const t=tier(p.rating);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(30,58,92,.35)">
+      <span style="font-size:16px;width:28px;text-align:center">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.'}</span>
+      <div class="av" style="background:${playerColor(p.id)}">${initials(p)}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:500">${fullName(p)}</div><span class="badge ${t.cls}" style="font-size:10px;padding:2px 7px">${t.label}</span></div>
+      <div style="font-weight:800;font-size:15px;color:var(--accent)">${p.rating}</div>
+    </div>`;
+  }).join('') || '<p style="color:var(--text3);font-size:13px">No players yet.</p>';
+
+  // Platform stats
+  const psEl = document.getElementById('ov-platform-stats');
+  psEl.innerHTML = `
+    <div style="font-size:13px;color:var(--text2)"><div class="rc-row" style="border-bottom:1px solid rgba(30,58,92,.4)"><span>Total players</span><strong>${allPlayers.length}</strong></div>
+    <div class="rc-row" style="border-bottom:1px solid rgba(30,58,92,.4)"><span>Total matches</span><strong>${allMatches.length}</strong></div>
+    <div class="rc-row" style="border-bottom:1px solid rgba(30,58,92,.4)"><span>Total events</span><strong>${allEvents.length}</strong></div>
+    <div class="rc-row"><span>Avg rating</span><strong style="color:var(--accent)">${allPlayers.length?Math.round(allPlayers.reduce((a,p)=>a+p.rating,0)/allPlayers.length):'—'}</strong></div></div>`;
+
+  // Community
+  const comEl = document.getElementById('ov-community');
+  if (!allMatches.length) { comEl.innerHTML='<p style="color:var(--text3);font-size:13px">No activity yet.</p>'; return; }
+  comEl.innerHTML = allMatches.slice(-4).reverse().map(m=>{
+    const p1=allPlayers.find(x=>x.id===m.p1), p2=allPlayers.find(x=>x.id===m.p2);
+    const w=m.winner==='A'?p1:p2;
+    return `<div style="font-size:12px;color:var(--text2);padding:8px 0;border-bottom:1px solid rgba(30,58,92,.35)">
+      <span style="color:var(--green);font-weight:600">${w?w.fname:'?'}</span> defeated ${m.winner==='A'?(p2?p2.fname:'?'):(p1?p1.fname:'?')} 
+      <span style="color:var(--text3)">${m.score||''} · ${m.sport}</span>
+    </div>`;
+  }).join('');
+}
+
+// ============================== PROFILE ==============================
+function renderProfile() {
+  const el = document.getElementById('profile-content');
+  if (!currentUser || !el) return;
+  const myPlayer = allPlayers.find(p=>p.userId===currentUser.id);
+  const sorted = [...allPlayers].sort((a,b)=>b.rating-a.rating);
+  const myRank = myPlayer ? sorted.findIndex(p=>p.id===myPlayer.id)+1 : null;
+  const win = myPlayer ? winPct(myPlayer) : 0;
+  const t = myPlayer ? tier(myPlayer.rating) : null;
+  const myMatches = myPlayer ? allMatches.filter(m=>m.p1===myPlayer.id||m.p2===myPlayer.id||m.p1b===myPlayer.id||m.p2b===myPlayer.id).slice(-8).reverse() : [];
+
+  el.innerHTML = `
+    <div class="profile-header">
+      <div class="av av-lg" style="background:${playerColor(currentUser.id)}">${(currentUser.fname[0]+(currentUser.lname||'?')[0]).toUpperCase()}</div>
+      <div>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:2px">${currentUser.fname} ${currentUser.lname||''}</h2>
+        <div style="color:var(--text3);font-size:13px;margin-bottom:8px">@${currentUser.username} · ${currentUser.email}</div>
+        ${myPlayer?`<div style="display:flex;gap:10px;align-items:center"><span class="badge ${t.cls}">${t.label}</span><span style="font-size:20px;font-weight:800;color:var(--accent)">${myPlayer.rating}</span>${myRank?`<span style="font-size:12px;color:var(--text3)">Rank #${myRank}</span>`:''}</div>`:'<span style="font-size:12px;color:var(--text3)">No player profile yet</span>'}
+      </div>
+    </div>
+    ${myPlayer?`<div class="g4" style="margin-bottom:20px">
+      <div class="stat-chip"><div class="val">${myPlayer.rating}</div><div class="lbl">Rating</div></div>
+      <div class="stat-chip"><div class="val">${myPlayer.wins}</div><div class="lbl">Wins</div></div>
+      <div class="stat-chip"><div class="val">${myPlayer.losses}</div><div class="lbl">Losses</div></div>
+      <div class="stat-chip"><div class="val">${win}%</div><div class="lbl">Win Rate</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">My Match History</div>
+      ${myMatches.map(m=>{
+        const iAmA = m.p1===myPlayer.id||m.p1b===myPlayer.id;
+        const won = iAmA ? m.winner==='A' : m.winner==='B';
+        const oppId = iAmA ? m.p2 : m.p1;
+        const opp = allPlayers.find(x=>x.id===oppId);
+        return `<div class="match-item">
+          <span class="badge ${won?'badge-win':'badge-loss'}">${won?'W':'L'}</span>
+          <span style="flex:1;font-size:13px">vs <strong>${opp?fullName(opp):'Unknown'}</strong> — ${m.sport}</span>
+          <span style="font-size:13px;color:${won?'var(--green)':'var(--red)'};font-weight:600">${m.score||'—'}</span>
+          <span style="font-size:11px;color:var(--text3)">${m.date}</span>
+        </div>`;
+      }).join('')||'<p style="color:var(--text3);font-size:13px">No matches yet.</p>'}
+    </div>`:'<div class="card" style="text-align:center;padding:40px;color:var(--text3)">Your player profile will appear after your first match is logged.</div>'}`;
+}
+
+// ============================== ELO ==============================
+function eloCalc(ra, rb, scoreA, k=32) {
+  const ea = 1/(1+Math.pow(10,(rb-ra)/400));
+  const eb = 1 - ea;
+  return [Math.round(ra+k*(scoreA-ea)), Math.round(rb+k*((1-scoreA)-eb))];
+}
+
+// ============================== HELPERS ==============================
+function v(id) { return document.getElementById(id)?.value||''; }
+function fullName(p) { return p ? (p.fname+' '+(p.lname||'')).trim() : '?'; }
+function initials(p) { return ((p.fname||'?')[0]+((p.lname||'?')[0])).toUpperCase(); }
+function winPct(p) { return p.wins+p.losses>0 ? Math.round(100*p.wins/(p.wins+p.losses)) : 0; }
+function today() { return new Date().toISOString().split('T')[0]; }
+const AV = ['#00d4aa','#0099ff','#8b5cf6','#f59e0b','#ef4444','#10b981','#ec4899','#f97316','#06b6d4','#a855f7'];
+function playerColor(id) { return AV[(id||0) % AV.length]; }
+function tier(r) {
+  if (r>=1800) return {label:'Pro',cls:'badge-gold'};
+  if (r>=1500) return {label:'Advanced',cls:'badge-blue'};
+  if (r>=1200) return {label:'Intermediate',cls:'badge-green'};
+  return {label:'Beginner',cls:'badge-gray'};
+}
+function showErr(id, msg) { const el=document.getElementById(id); if(el){el.textContent=msg;el.style.display='block';} }
+function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+
+let toastTimer;
+function toast(msg, type='success') {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = 'toast '+type+' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+function scrollTo(sel) {
+  document.querySelector(sel)?.scrollIntoView({behavior:'smooth'});
+}
+
+// Close overlays on backdrop click
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('overlay')) e.target.classList.remove('open');
+});
+
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('main-nav');
+  if (nav) { if(window.scrollY>60) nav.classList.add('scrolled'); else nav.classList.remove('scrolled'); }
+});
+
+// ============================== MARQUEE ==============================
+const PARTNERS = [
+  'CourtReserve','PlayByPoint','MatchTime','Bounce Brackets','Pickleball 360',
+  'JOOLA','Six Zero','Pickleheads','Global PB Network','Stacked App',
+  'MyPBGames','ACE Pickleball','Raqt','Erne Machine','Swish Sports',
+  'Pickleball Central','World PB Tour','Impact Activities','Mproov','MProov Coach'
+];
+function buildMarquee() {
+  const track = document.getElementById('marquee-track');
+  if (!track) return;
+  const items = [...PARTNERS, ...PARTNERS].map(p => `<div class="partner-pill"><div class="dot"></div>${p}</div>`).join('');
+  track.innerHTML = items;
+}
+
+// ============================== COUNTER ANIMATION ==============================
+function animateCounters() {
+  const targets = [
+    {el:'cnt-players', end:allPlayers.length||1200, suffix:''},
+    {el:'cnt-matches', end:allMatches.length||8400, suffix:''},
+    {el:'cnt-clubs', end:allEvents.length||47, suffix:''},
+  ];
+  targets.forEach(({el,end,suffix})=>{
+    const elem = document.getElementById(el);
+    if(!elem) return;
+    let start=0, step=Math.ceil(end/40);
+    const interval = setInterval(()=>{
+      start = Math.min(start+step, end);
+      elem.textContent = start.toLocaleString()+suffix;
+      if(start>=end) clearInterval(interval);
+    }, 30);
+  });
+}
+
+// ============================== SEED DEMO DATA ==============================
+async function seedDemo() {
+  const existing = await dbGetAll('users');
+  if (existing.length) return; // already seeded
+
+  // Demo user
+  const hash = await hashPassword('demo123');
+  const uid = await dbAdd('users', {username:'demo', fname:'Demo', lname:'Player', email:'demo@durp.gg', hash, createdAt:new Date().toISOString()});
+
+  // Demo players
+  const names = [['Alex','Santos'],['Jordan','Cruz'],['Maria','Tan'],['David','Park'],['Emma','Reyes'],['Carlos','Wu'],['Nina','Patel'],['Sam','Garcia'],['Lee','Kim'],['Priya','Nair']];
+  const pids = [];
+  for (let i=0; i<names.length; i++) {
+    const [f,l] = names[i];
+    const r = 850+Math.floor(Math.random()*700);
+    const pid = await dbAdd('players', {fname:f,lname:l,email:`${f.toLowerCase()}@example.com`,rating:r,peakRating:r,history:[{date:'2026-01-01',rating:r}],wins:0,losses:0,streak:0,streakType:null,addedAt:new Date().toISOString()});
+    pids.push(pid);
+  }
+  // Demo player as user
+  const dpid = await dbAdd('players', {userId:uid,fname:'Demo',lname:'Player',email:'demo@durp.gg',rating:1000,peakRating:1000,history:[{date:'2026-01-01',rating:1000}],wins:0,losses:0,streak:0,streakType:null,addedAt:new Date().toISOString()});
+  pids.push(dpid);
+
+  const allPs = await dbGetAll('players');
+
+  // Demo matches
+  const sports = ['Pickleball','Tennis','Padel'];
+  for (let i=0; i<18; i++) {
+    const d = new Date(); d.setDate(d.getDate()-i*2);
+    const idx1 = Math.floor(Math.random()*allPs.length);
+    let idx2 = Math.floor(Math.random()*allPs.length);
+    while(idx2===idx1) idx2=Math.floor(Math.random()*allPs.length);
+    const p1=allPs[idx1], p2=allPs[idx2];
+    const winner = Math.random()>0.5?'A':'B';
+    const [nra,nrb] = [0,0]; // don't recalc for seed speed
+    const da = Math.round((Math.random()-0.5)*40);
+    const db = -da;
+    p1.rating=Math.max(100,p1.rating+(winner==='A'?Math.abs(da):-Math.abs(da)));
+    p2.rating=Math.max(100,p2.rating+(winner==='B'?Math.abs(db):-Math.abs(db)));
+    p1.peakRating=Math.max(p1.peakRating||p1.rating,p1.rating);
+    p2.peakRating=Math.max(p2.peakRating||p2.rating,p2.rating);
+    const h1={date:d.toISOString().split('T')[0],rating:p1.rating};
+    const h2={date:d.toISOString().split('T')[0],rating:p2.rating};
+    p1.history.push(h1); p2.history.push(h2);
+    if(winner==='A'){p1.wins++;p2.losses++;}else{p2.wins++;p1.losses++;}
+    p1.streak=(p1.streakType==='W'&&winner==='A')||(p1.streakType==='L'&&winner==='B')?p1.streak+1:1;
+    p1.streakType=winner==='A'?'W':'L';
+    p2.streak=(p2.streakType==='W'&&winner==='B')||(p2.streakType==='L'&&winner==='A')?p2.streak+1:1;
+    p2.streakType=winner==='B'?'W':'L';
+    await dbPut('players',p1); await dbPut('players',p2);
+    const s1=Math.floor(Math.random()*4)+8,s2=Math.floor(Math.random()*s1);
+    await dbAdd('matches',{p1:p1.id,p2:p2.id,p1b:null,p2b:null,score:`${winner==='A'?s1:s2}-${winner==='A'?s2:s1}`,winner,date:d.toISOString().split('T')[0],notes:'',sport:sports[Math.floor(Math.random()*sports.length)],da,db,loggedBy:uid,loggedAt:new Date().toISOString()});
+  }
+
+  // Demo events
+  await dbAdd('events',{name:'Summer Club Championship',date:'2026-07-20',format:'Round Robin',loc:'Main Courts',sport:'Pickleball',desc:'Annual summer tournament open to all rated members. Prizes for top 3.',participants:[],createdAt:new Date().toISOString(),createdBy:uid});
+  await dbAdd('events',{name:'Wednesday Night Ladder',date:'2026-06-18',format:'King of the Court',loc:'Indoor Courts B',sport:'Pickleball',desc:'Weekly ladder play. Show up and get matched by rating.',participants:[],createdAt:new Date().toISOString(),createdBy:uid});
+  await dbAdd('events',{name:'Beginners Welcome Day',date:'2026-07-05',format:'Round Robin',loc:'Outdoor Courts 1-4',sport:'Padel',desc:'Friendly introductory event for new players. All levels welcome.',participants:[],createdAt:new Date().toISOString(),createdBy:uid});
+}
+
+// ============================== INIT ==============================
+async function init() {
+  await openDB();
+  await seedDemo();
+  await loadAll();
+  buildMarquee();
+
+  // Check for existing session
+  const session = await dbGetMeta('session');
+  if (session && session.id) {
+    // Verify user still exists
+    const user = await dbGet('users', session.id);
+    if (user) {
+      currentUser = session;
+      showDashboard();
+      return;
+    }
+  }
+  showView('landing');
+  animateCounters();
+}
+
+init();
+</script>
+</body>
+</html>
